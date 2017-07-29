@@ -1,0 +1,159 @@
+import sys, pygame, math, time
+from pygame.locals import *
+from player import Player
+from entity import Entity
+
+pygame.init()
+
+size = width, height = 1280, 720
+black = 0, 0, 0
+grey = 100, 100, 100
+white = 255, 255, 255
+
+screen = pygame.display.set_mode(size)
+pygame.display.set_caption("Float")
+
+entities = []
+entity_rules = [[(0, 1), (0, -1)],
+                [(0, -1), (0, 1)],
+                [(-1, 0), (1, 0)],
+                [(1, 0), (-1, 0)]]
+move_entities = True
+
+def load_level(n):
+    lvlstr = open("./levels/" + str(n), "r").read().split("\n")[1:]
+    lvlstr = "\n".join(lvlstr)
+
+    level = [[]]
+
+    row = 0
+    for tile in lvlstr:
+        if tile != "\n":
+            if int(tile) > 2:
+                level[row].append(0)
+            else:
+                level[row].append(int(tile))
+        else:
+            row += 1
+            level.append([])
+
+    return level
+
+def load_player(n):
+    plr = open("./levels/" + str(n), "r").read().split("\n")[0].split(",")
+
+    return Player([int(plr[0]), int(plr[1])], int(plr[2]))
+
+def load_entities(n):
+    entstr = open("./levels/" + str(n), "r").read().split("\n")[1:]
+
+    entities = []
+
+    y = 0
+    for row in entstr:
+        x = 0
+        for tile in row:
+            if int(tile) > 2:
+                entities.append(Entity([x, y], entity_rules[int(tile) - 3]))
+            x += 1
+        y += 1
+
+    return entities
+
+
+def draw_tile(tile, x, y):
+    if tile == 0:
+        pygame.draw.rect(screen, black, pygame.Rect(x * width/16, y * height/9,\
+            width/16, height/9))
+    if tile == 1:
+        pygame.draw.rect(screen, grey, pygame.Rect(x * width/16, y * height/9,\
+            width/16, height/9))
+    if tile == 2:
+        pygame.draw.rect(screen, white, pygame.Rect(x * width/16, y * height/9,\
+            width/16, height/9))
+
+def can_walk(pos):
+    if get_tile(pos) not in [0, 2]:
+        return False
+
+    for entity in entities:
+        if pos == entity.pos:
+            return False
+
+    return True
+
+def get_tile(pos):
+    return level[pos[1]][pos[0]]
+
+def move_player(direction):
+    global level
+    global player
+    global entities
+    global num_lvl
+
+    if player.power == -1:
+        level = load_level(num_lvl)
+        player = load_player(num_lvl)
+        entities = load_entities(num_lvl)
+        return
+
+    for entity in entities:
+        entity.move()
+
+    player.move(direction)
+
+num_lvl = 1
+level = load_level(num_lvl)
+player = load_player(num_lvl)
+player.move([0, 0])                             # "Excellent code" - Mrtijn 2017
+entities = load_entities(num_lvl)
+old_player_pos = player.get_pos()
+
+while 1:
+    for event in pygame.event.get():
+        if event.type == pygame.VIDEORESIZE:
+            size = event.size
+            width = event.w
+            height = event.h
+        if event.type == pygame.QUIT:
+            sys.exit()
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_UP:
+                move_player([0, -1])
+            if event.key == pygame.K_DOWN:
+                move_player([0, 1])
+            if event.key == pygame.K_LEFT:
+                move_player([-1, 0])
+            if event.key == pygame.K_RIGHT:
+                move_player([1, 0])
+
+    screen.fill(black)
+
+    # updating
+
+    if get_tile(player.get_pos()) is 2:
+        num_lvl += 1
+        try:
+            level = load_level(num_lvl)
+            player = load_player(num_lvl)
+            entities = load_entities(num_lvl)
+        except IOError:
+            level = load_level(99)
+            player = load_player(99)
+            entities = load_entities(99)
+
+    # drawing
+    y = 0
+    for row in level:
+        x = 0
+        for tile in row:
+            draw_tile(tile, x, y)
+            x += 1
+        y += 1
+
+    player.draw(screen, width, height)
+
+    for entity in entities:
+        entity.draw(screen, width, height)
+
+    pygame.display.flip()
