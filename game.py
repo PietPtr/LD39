@@ -150,6 +150,7 @@ while 1:
     # updating
 
     if get_tile(player.get_pos()) is 2:
+        print("power: ", player.power)
         num_lvl += 1
         try:
             reset()
