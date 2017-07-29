@@ -17,7 +17,8 @@ entities = []
 entity_rules = [[(0, 1), (0, -1)],
                 [(0, -1), (0, 1)],
                 [(-1, 0), (1, 0)],
-                [(1, 0), (-1, 0)]]
+                [(0, 0),(0, 0),(0, 0),(0, 0),(0, 0),(0, 0),(0, 0),(0, 0),(0, 0),(0, 0),(0, 0),(0, 0),(0, 1)],
+                [(0, 0),(0, 0),(0, 0),(0, 1),(0, 0),(0, -1)]]
 move_entities = True
 
 def load_level(n):
@@ -102,7 +103,7 @@ def move_player(direction):
 
     player.move(direction)
 
-num_lvl = 1
+num_lvl = 4
 level = load_level(num_lvl)
 player = load_player(num_lvl)
 player.move([0, 0])                             # "Excellent code" - Mrtijn 2017
