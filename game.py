@@ -4,6 +4,7 @@ from player import Player
 from entity import Entity
 
 pygame.init()
+pygame.font.init()
 
 size = width, height = 1280, 720
 black = 0, 0, 0
@@ -12,6 +13,8 @@ white = 255, 255, 255
 
 screen = pygame.display.set_mode(size)
 pygame.display.set_caption("Float")
+
+font = pygame.font.SysFont('Monospace', 30)
 
 entities = []
 entity_rules = [[(0, 1), (0, -1)],
@@ -93,9 +96,7 @@ def move_player(direction):
     global num_lvl
 
     if player.power == -1:
-        level = load_level(num_lvl)
-        player = load_player(num_lvl)
-        entities = load_entities(num_lvl)
+        reset()
         return
 
     for entity in entities:
@@ -103,12 +104,28 @@ def move_player(direction):
 
     player.move(direction)
 
-num_lvl = 4
+num_lvl = 1
 level = load_level(num_lvl)
 player = load_player(num_lvl)
 player.move([0, 0])                             # "Excellent code" - Mrtijn 2017
 entities = load_entities(num_lvl)
+
 old_player_pos = player.get_pos()
+
+starttime = time.time()
+endtime = 0
+
+
+def reset():
+    global level
+    global player
+    global entities
+    global num_lvl
+
+    level = load_level(num_lvl)
+    player = load_player(num_lvl)
+    entities = load_entities(num_lvl)
+
 
 while 1:
     for event in pygame.event.get():
@@ -135,15 +152,18 @@ while 1:
     if get_tile(player.get_pos()) is 2:
         num_lvl += 1
         try:
-            level = load_level(num_lvl)
-            player = load_player(num_lvl)
-            entities = load_entities(num_lvl)
+            reset()
         except IOError:
-            level = load_level(99)
-            player = load_player(99)
-            entities = load_entities(99)
+            num_lvl = 99
+            endtime = time.time()
+            reset()
+
+    for entity in entities:
+        if entity.pos == player.grid_pos:
+            reset()
 
     # drawing
+
     y = 0
     for row in level:
         x = 0
@@ -156,5 +176,12 @@ while 1:
 
     for entity in entities:
         entity.draw(screen, width, height)
+
+    if num_lvl == 99:
+        timetext = font.render("You completed the game in " + \
+            str(round(endtime - starttime, 2)) + " seconds!", False, white)
+
+        screen.blit(timetext, (width / 2 - timetext.get_width() / 2, \
+            height - font.get_height() - 10))
 
     pygame.display.flip()

@@ -36,7 +36,8 @@ class Player(object):
         else:
             self.moved = False
 
-        self.power -= 1
+        if direction != [0, 0]:
+            self.power -= 1
 
     def draw(self, screen, width, height):
         saturation = float(self.power) / self.max_pow * 255
