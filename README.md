@@ -16,6 +16,4 @@ Download and install **32-bit** Python 3.2 (https://www.python.org/download/rele
 
 Download and install Pygame (http://www.pygame.org/download.shtml)
 
-Open a console window in the directory of the game
-
-Run ```python game.py```
+Double click game.py to run the game.
