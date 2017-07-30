@@ -9,9 +9,9 @@ pygame.init()
 pygame.font.init()
 
 size = width, height = 1280, 720
-black = 0, 0, 0
-grey = 100, 100, 100
-white = 255, 255, 255
+black = 41, 43, 44
+grey = 193, 193, 193
+white = 247, 247, 249
 
 screen = pygame.display.set_mode(size)
 pygame.display.set_caption('Float')

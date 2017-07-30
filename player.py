@@ -75,7 +75,27 @@ class Player(object):
 
         playerrect = pygame.Rect(x, y, width / 16, height / 9)
 
-        pygame.draw.rect(screen, (255 - saturation, saturation, 0), playerrect)
+        pygame.draw.rect(screen, (255 - saturation, saturation, 79), playerrect)
+
+        batwidth = 0.4
+        batheight = 0.7
+        batcolor = (41, 43, 44)
+        batpower = self.power
+        if batpower < 0:
+            batpower = 0
+
+        #batx = x + width / 16 * batwidth - width / 16 / 4
+        batx = x + width / 16 / 2 - (width / 16) * batwidth / 2
+        baty = y + height / 9 / 2 - (height / 9) * batheight / 2
+
+        fillheight = height / 9 * batheight * (batpower / self.max_pow)
+        batfillrect = pygame.Rect(batx, baty + (height / 9 * batheight - fillheight), width / 16 * batwidth, fillheight)
+
+        pygame.draw.rect(screen, batcolor, batfillrect)
+
+        batrect = pygame.Rect(batx, baty, width / 16 * batwidth, height / 9 * batheight)
+
+        pygame.draw.rect(screen, batcolor, batrect, 2)
 
 
     def reset(self, power):

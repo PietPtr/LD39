@@ -37,4 +37,4 @@ class Entity(object):
 
         entrect = pygame.Rect(x, y, width / 16, height / 9)
 
-        pygame.draw.rect(screen, (100, 100, 100), entrect)
+        pygame.draw.rect(screen, (193, 193, 193), entrect)
