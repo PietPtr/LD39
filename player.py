@@ -35,6 +35,10 @@ class Player(object):
 
     def move(self, direction):
         new_pos = self.can_move(direction) # new_pos is either False, or a list...
+
+        if direction != [0, 0]:
+            self.power -= 1
+
         if new_pos != False:
             self.grid_pos = new_pos[:]
             self.moved = True
@@ -42,9 +46,6 @@ class Player(object):
             self.last_move = direction[:]
         else:
             self.moved = False
-
-        if direction != [0, 0]:
-            self.power -= 1
 
         # print (self.max_pow - self.power)
 

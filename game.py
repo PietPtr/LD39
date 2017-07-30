@@ -3,6 +3,8 @@ from pygame.locals import *
 from player import Player
 from entity import Entity
 
+pygame.mixer.pre_init(44100, -16, 2, 512)
+pygame.mixer.init(frequency=22050, size=-16, channels=2, buffer=512)
 pygame.init()
 pygame.font.init()
 
@@ -12,9 +14,13 @@ grey = 100, 100, 100
 white = 255, 255, 255
 
 screen = pygame.display.set_mode(size)
-pygame.display.set_caption("Float")
+pygame.display.set_caption('Float')
 
 font = pygame.font.SysFont('Monospace', 30)
+
+step_wav = pygame.mixer.Sound('./sound/step.wav')
+next_wav = pygame.mixer.Sound('./sound/next.wav')
+thud_wav = pygame.mixer.Sound('./sound/thud.wav')
 
 entities = []
 entity_rules = [[(0, 1), (0, -1)],
@@ -25,14 +31,14 @@ entity_rules = [[(0, 1), (0, -1)],
 move_entities = True
 
 def load_level(n):
-    lvlstr = open("./levels/" + str(n), "r").read().split("\n")[1:]
-    lvlstr = "\n".join(lvlstr)
+    lvlstr = open('./levels/' + str(n), 'r').read().split('\n')[1:]
+    lvlstr = '\n'.join(lvlstr)
 
     level = [[]]
 
     row = 0
     for tile in lvlstr:
-        if tile != "\n":
+        if tile != '\n':
             if int(tile) > 2:
                 level[row].append(0)
             else:
@@ -44,12 +50,12 @@ def load_level(n):
     return level
 
 def load_player(n):
-    plr = open("./levels/" + str(n), "r").read().split("\n")[0].split(",")
+    plr = open('./levels/' + str(n), 'r').read().split('\n')[0].split(',')
 
     return Player([int(plr[0]), int(plr[1])], int(plr[2]))
 
 def load_entities(n):
-    entstr = open("./levels/" + str(n), "r").read().split("\n")[1:]
+    entstr = open('./levels/' + str(n), 'r').read().split('\n')[1:]
 
     entities = []
 
@@ -106,10 +112,13 @@ def move_player(direction):
 
     player.move(direction)
 
-num_lvl = 6
+    if not player.moved:
+        thud_wav.play()
+
+num_lvl = 1
 level = load_level(num_lvl)
 player = load_player(num_lvl)
-player.move([0, 0])                             # "Excellent code" - Mrtijn 2017
+player.move([0, 0])                             # 'Excellent code' - Mrtijn 2017
 entities = load_entities(num_lvl)
 
 old_player_pos = player.get_pos()
@@ -152,13 +161,14 @@ while 1:
     # updating
 
     if get_tile(player.get_pos()) is 2:
+        next_wav.play()
         if num_lvl == 99:
             num_lvl = 1
             reset()
             starttime = time.time()
             continue
 
-        print("power: ", player.power)
+        print('power: ', player.power)
         num_lvl += 1
         try:
             reset()
@@ -187,8 +197,8 @@ while 1:
         entity.draw(screen, width, height)
 
     if num_lvl == 99:
-        timetext = font.render("You completed the game in " + \
-            str(round(endtime - starttime, 2)) + " seconds!", False, white)
+        timetext = font.render('You completed the game in ' + \
+            str(round(endtime - starttime, 2)) + ' seconds!', False, white)
 
         screen.blit(timetext, (width / 2 - timetext.get_width() / 2, \
             height - font.get_height() - 10))
