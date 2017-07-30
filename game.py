@@ -95,6 +95,8 @@ def move_player(direction):
     global entities
     global num_lvl
 
+    #print(round(time.time() * 1000))
+
     if player.power == -1:
         reset()
         return
@@ -104,7 +106,7 @@ def move_player(direction):
 
     player.move(direction)
 
-num_lvl = 1
+num_lvl = 6
 level = load_level(num_lvl)
 player = load_player(num_lvl)
 player.move([0, 0])                             # "Excellent code" - Mrtijn 2017
@@ -150,6 +152,12 @@ while 1:
     # updating
 
     if get_tile(player.get_pos()) is 2:
+        if num_lvl == 99:
+            num_lvl = 1
+            reset()
+            starttime = time.time()
+            continue
+
         print("power: ", player.power)
         num_lvl += 1
         try:
