@@ -75,6 +75,8 @@ def draw_tile(tile, x, y):
     if tile == 0:
         pygame.draw.rect(screen, black, pygame.Rect(x * width/16, y * height/9,\
             width/16, height/9))
+        pygame.draw.rect(screen, (21, 23, 24), pygame.Rect(x * width/16, y * height/9,\
+            width/16, height/9), 1)
     if tile == 1:
         pygame.draw.rect(screen, grey, pygame.Rect(x * width/16, y * height/9,\
             width/16, height/9))

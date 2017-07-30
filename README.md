@@ -1,4 +1,4 @@
-# LD39
+# Battery Blocks: Bypass
 
 Game for Ludum Dare 39
 
